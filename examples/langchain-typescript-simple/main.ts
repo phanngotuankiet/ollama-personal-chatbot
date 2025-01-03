@@ -3,7 +3,7 @@ import * as readline from "readline";
 
 async function main() {
   const ollama = new Ollama({
-    model: 'mistral'    
+    model: 'codellama'    
     // other parameters can be found at https://js.langchain.com/docs/api/llms_ollama/classes/Ollama
   });
 
