@@ -1,6 +1,6 @@
 import * as readline from "readline";
 
-const model = "llama3.2";
+const model = "codellama";
 type Message = {
   role: "assistant" | "user" | "system";
   content: string;
@@ -31,20 +31,32 @@ async function chat(messages: Message[]): Promise<Message> {
     throw new Error("Failed to read response body")
   }
   let content = ""
-  while (true) {
+  let reading = true;
+  while (reading) {
     const { done, value } = await reader.read()
     if (done) {
+      reading = false;
       break;
     }
-    const rawjson = new TextDecoder().decode(value);
-    const json = JSON.parse(rawjson)
-
-    if (json.done === false) {
-      process.stdout.write(json.message.content);
-      content += json.message.content
+    
+    try {
+      const rawjson = new TextDecoder().decode(value);
+      const lines = rawjson.split('\n').filter(line => line.trim());
+      
+      for (const line of lines) {
+        if (!line) continue;
+        const json = JSON.parse(line);
+        if (json.done === false) {
+          process.stdout.write(json.message.content);
+          content += json.message.content;
+        }
+      }
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+      continue;
     }
-
   }
+  
   return { role: "assistant", content: content };
 }
 

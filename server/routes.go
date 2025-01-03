@@ -121,6 +121,21 @@ func (s *Server) GenerateHandler(c *gin.Context) {
 		return
 	}
 
+	// Add more visible logging
+	fmt.Printf("\n=== Generate Request ===\n")
+	fmt.Printf("Model: %s\n", req.Model)
+	fmt.Printf("Prompt: %s\n", req.Prompt)
+	fmt.Printf("System: %s\n", req.System)
+	fmt.Printf("Template: %s\n", req.Template) 
+	fmt.Printf("Stream: %v\n", req.Stream)
+	fmt.Printf("Raw: %v\n", req.Raw)
+	fmt.Printf("Format: %s\n", req.Format)
+	fmt.Printf("Options: %+v\n", req.Options)
+	fmt.Printf("Context length: %d\n", len(req.Context))
+	fmt.Printf("Images count: %d\n", len(req.Images))
+	fmt.Printf("Keep alive: %v\n", req.KeepAlive)
+	fmt.Printf("=====================\n\n")
+
 	name := model.ParseName(req.Model)
 	if !name.IsValid() {
 		// Ideally this is "invalid model name" but we're keeping with
@@ -1549,7 +1564,7 @@ func (s *Server) ChatHandler(c *gin.Context) {
 		if err := r.Completion(c.Request.Context(), llm.CompletionRequest{
 			Prompt:  prompt,
 			Images:  images,
-			Format:  req.Format,
+			Format: req.Format,
 			Options: opts,
 		}, func(r llm.CompletionResponse) {
 			res := api.ChatResponse{

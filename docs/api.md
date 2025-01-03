@@ -505,7 +505,7 @@ The `message` object has the following fields:
 
 Advanced parameters (optional):
 
-- `format`: the format to return a response in. Format can be `json` or a JSON schema. 
+- `format`: the format to return a response in. Format can be `json` or a JSON schema.
 - `options`: additional model parameters listed in the documentation for the [Modelfile](./modelfile.md#valid-parameters-and-values) such as `temperature`
 - `stream`: if `false` the response will be returned as a single response object, rather than a stream of objects
 - `keep_alive`: controls how long the model will stay loaded into memory following the request (default: `5m`)
@@ -877,6 +877,7 @@ curl http://localhost:11434/api/chat -d '{
 ```
 
 ##### Response
+
 ```json
 {
   "model": "llama3.2",
@@ -939,22 +940,22 @@ Create a model from a [`Modelfile`](./modelfile.md). It is recommended to set `m
 
 #### Quantization types
 
-| Type | Recommended |
-| --- | :-: |
-| q2_K | |
-| q3_K_L | |
-| q3_K_M | |
-| q3_K_S | |
-| q4_0 | |
-| q4_1 | |
-| q4_K_M | * |
-| q4_K_S | |
-| q5_0 | |
-| q5_1 | |
-| q5_K_M | |
-| q5_K_S | |
-| q6_K | |
-| q8_0 | * |
+| Type   | Recommended |
+| ------ | :---------: |
+| q2_K   |            |
+| q3_K_L |            |
+| q3_K_M |            |
+| q3_K_S |            |
+| q4_0   |            |
+| q4_1   |            |
+| q4_K_M |      *      |
+| q4_K_S |            |
+| q5_0   |            |
+| q5_1   |            |
+| q5_K_M |            |
+| q5_K_S |            |
+| q6_K   |            |
+| q8_0   |      *      |
 
 ### Examples
 
@@ -1017,7 +1018,6 @@ A stream of JSON objects is returned:
 {"status":"writing manifest"}
 {"status":"success"}
 ```
-
 
 ### Check if a Blob Exists
 
@@ -1442,6 +1442,7 @@ curl http://localhost:11434/api/embed -d '{
 ```
 
 ## List Running Models
+
 ```shell
 GET /api/ps
 ```
