@@ -5,7 +5,27 @@ from fastapi.middleware.cors import CORSMiddleware
 from langchain_community.document_loaders import WebBaseLoader
 from langchain.chains.summarize import load_summarize_chain
 from langchain_ollama import OllamaLLM
-from typing import Optional
+from typing import Optional, List
+
+import os
+from dotenv import load_dotenv
+
+from langchain_core.tools import Tool
+from langchain_google_community import GoogleSearchAPIWrapper
+
+load_dotenv()
+
+search = GoogleSearchAPIWrapper()
+
+tool = Tool(
+    name="google_search",
+    description="Search Google for recent results.",
+    func=search.run,
+)
+
+# Thêm print để xem kết quả
+result = tool.run("Obama's first name?")
+print("Search Result:", result)
 
 # Khởi tạo FastAPI app
 app = FastAPI()
@@ -13,7 +33,7 @@ app = FastAPI()
 # Cấu hình CORS để cho phép frontend gọi API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Trong production nên giới hạn origins cụ thể
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -37,10 +57,16 @@ class SummarizeRequest(BaseModel):
     # chain_type="map_rerank": Tương tự map_reduce nhưng thêm bước xếp hạng các tóm tắt để chọn ra
     # những phần quan trọng nhất. Phù hợp khi cần tập trung vào những điểm chính của văn bản.
 
+# Model cho search request
+class SearchRequest(BaseModel):
+    query: str
+    k: Optional[int] = 3  # Số lượng kết quả trả về
+
 @app.post("/summarize")
 async def summarize_url(request: SummarizeRequest):
     try:
         # Khởi tạo loader với URL từ body của request - đoạn này đọc nội dung từ website
+        # AI model vốn không thể truy cập được internet nên WebBaseLoader tải nội dung từ HTML và lọc ra web sạch
         loader = WebBaseLoader(request.url)
         # WebBaseLoader làm những điều sau:
         # 1. Sử dụng BeautifulSoup4 để tải nội dung HTML từ url
