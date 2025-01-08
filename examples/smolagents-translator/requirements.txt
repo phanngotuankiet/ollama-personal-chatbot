@@ -10,3 +10,7 @@ sentencepiece>=0.1.99
 # Optional but recommended for better performance
 accelerate>=0.27.0
 protobuf>=4.25.0  # Cho model serialization
+
+langchain
+chromadb
+sentence-transformers
